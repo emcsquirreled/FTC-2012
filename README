@@ -2,9 +2,26 @@ E=MC Squirreled
 FTC Team 4508
 ===============
 
-This is the main folder for our 2012-2012 FTC season.
+OVERVIEW
 
-Code in the 'NXT' folder is RobotC code for the LEGO Mindstorms NXT brain.
-Code in the 'RPi' folder is C++ code for the Raspberry Pi (Raspbian Kernel).
+This project contains all of the code for FTC Team 4508's 2012-2013 season. Our objective this season
+is to push the limits of the FTC program, both technically and socially. Please poke around our code,
+hopefully you might learn something. Perhaps you can even teach us something in return!
 
-Visit us at emcsquirreled.github.com!
+===============
+
+DIRECTORIES
+
+/NXT/ contains RobotC programs to be run on the LEGO Mindstorms NXT.
+
+/RPi/ contains programs to be run on the Raspberry Pi.
+
+===============
+
+PROJECT LAYOUT
+
+In order to comply with the FTC competition rules, the LEGO NXT is the "brain" of our system. Due to its
+nature as an educational toy, we are "supplementing" it with the Raspberry Pi. In plain english, the Pi
+will be acting as a master device, communicating commands to the NXT, which then relays the commands to
+the rest of the robot. Thus, the NXT remains the center of the layout, fulfilling the rules, and the Pi
+is the true powerhouse.
