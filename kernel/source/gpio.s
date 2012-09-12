@@ -2,7 +2,7 @@
 .globl GetGpioAddress
 GetGpioAddress:
 /* Store the address in r0 */
-ldr r0=0x20200000
+ldr r0,=0x20200000
 /* Return */
 mov pc,lr
 
