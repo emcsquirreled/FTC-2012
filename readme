@@ -12,9 +12,20 @@ hopefully you might learn something. Perhaps you can even teach us something in 
 
 DIRECTORIES
 
-/NXT/ contains RobotC programs to be run on the LEGO Mindstorms NXT.
+/emcsquirreled.github.com/
+	Contains our website
 
-/RPi/ contains programs to be run on the Raspberry Pi.
+/FTC-2012/
+	Contains our entire codebase for the 2012-2013 FTC Season
+
+	/kernel/
+		Contains code for our custom kernel for the Raspberry Pi
+
+	/nxt/
+		Contains RobotC programs to be run on the LEGO Mindstorms NXT.
+
+	/rpi/ 
+		Contains programs to be run on the Raspberry Pi.
 
 ===============
 
