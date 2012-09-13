@@ -1,55 +1,41 @@
-/* Initialization Section */
 .section .init
+
 .globl _start
 _start:
-/* Branch to main */
-b main
+	b Main
 
-/* Text (Main) Section */
 .section .text
-main:
-/* Move the instruction pointer to the beginning of the code */
-mov sp,#0x80000
 
-/* Set GPIO pin 16 to output */
-pinNum .req r0
-pinMode .req r1
-mov pinNum,#16
-mov pinMode,#1
-bl SetGpioMode
-.unreq pinNum
-.unreq pinMode
+Main:
+	mov sp,#0x80000
 
-blink:
-/* Turn the OK LED on */
-pinNum .req r0
-pinVal .req r1
-mov pinNum,#16
-mov pinVal,#1
-bl SetGpio
-.unreq pinNum
-.unreq pinVal
+	ptrn .req r4
+	ldr ptrn,=pattern
+	ldr ptrn,[ptrn]
 
-/* Wait */
-micros .req r0
-mov micros,#0xFF00
-bl Wait
-.unreq micros
+	seq .req r5
+	mov seq,#0
 
-/* Turn the OK LED off */
-pinNum .req r0
-pinVal .req r1
-mov pinNum,#16
-mov pinVal,#0
-bl SetGpio
-.unreq pinNum
-.unreq pinVal
+	mov r0,#16
+	mov r1,#1
+	bl SetGpioMode
 
-/* Wait */
-micros .req r0
-mov micros,#0xFF00
-bl Wait
-.unreq micros
+	MainBlinkLoop:
+		mov r0,#16
+		mov r1,#1
+		lsl r1,seq
+		and r1,ptrn
+		bl SetGpio
 
-/* Go back to the beginning */
-b blink
+		ldr r0,=250000
+		bl Wait
+		
+		add seq,#1
+		and seq,#0b11111
+	b MainBlinkLoop
+
+.section .data
+
+.align 2
+pattern:
+	.int 0b11111111101010100010001000101010
