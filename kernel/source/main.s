@@ -31,13 +31,10 @@ bl SetGpio
 .unreq pinVal
 
 /* Wait */
-push {r0, r1}
-mov r0,#0x3F0000
-wait1:
-sub r0,#1
-cmp r0,#0
-bne wait1
-pop {r0, r1}
+micros .req r0
+mov micros,#0xFF00
+bl Wait
+.unreq micros
 
 /* Turn the OK LED off */
 pinNum .req r0
@@ -49,13 +46,10 @@ bl SetGpio
 .unreq pinVal
 
 /* Wait */
-push {r0, r1}
-mov r0,#0x3F0000
-wait2:
-sub r0,#1
-cmp r0,#0
-bne wait2
-pop {r0, r1}
+micros .req r0
+mov micros,#0xFF00
+bl Wait
+.unreq micros
 
 /* Go back to the beginning */
 b blink
