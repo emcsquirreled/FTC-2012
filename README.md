@@ -21,10 +21,6 @@ This code is for education purposes. Please read through it, learn what you can,
 ORGANIZATION
 ============
 
-./kernel/
-
-An abortive attempt at a custom OS for the Raspberry Pi (raspberrypi.org) which we were going to use as a main processor, but discontinued due to power requirements
-
 ./nxt/
 
 RobotC code for the NXT

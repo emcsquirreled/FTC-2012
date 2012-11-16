@@ -2,6 +2,30 @@
 #pragma config(Sensor, S2,      radarTouch,   sensorTouch)
 #pragma config(Motor,  motorA,  radarMotor,   tmotorNormal,               PIDControl,   encoder)
 
+/*
+ * IR_Test.c
+ * This file is part of EMC Squirreled IR Test
+ *
+ * Copyright (C) 2012 - EMC Squirrled
+ *
+ * EMC Squirreled IR Test is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * EMC Squirreled IR Test is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with EMC Squirreled IR Test; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, 
+ * Boston, MA  02110-1301  USA
+ */
+
+
+
 /* This section include all drivers and other code necessary for the program to run */
 #include <HTIRS-driver.h>
 #include "IR_Routines.h"
