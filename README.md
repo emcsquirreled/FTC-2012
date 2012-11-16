@@ -1,10 +1,7 @@
-E=MC SQUIRRELED
-===============
-FTC Team 4508
-=============
+E=MC SQUIRRELED -- FTC Team 4508 -- Ring It Up! Code Base
+=========================================================
 
-Ring It Up! Code Base
-=====================
+
 
 INFO
 ====
