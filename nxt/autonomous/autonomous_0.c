@@ -97,8 +97,58 @@ void moveBackward(int iDistance, short iPower) {
 	return;
 }
 
-void turnLeft(int iDegrees, short iPower);
-void turnRight(int iDegrees, short iPower);
+void turnLeft(int iDegrees, short iPower) {
+	vOnLeft(-1 * iPower);
+	vOnRight(iPower);
+
+	vWaitForTurn(iDegrees);
+
+	vOffLeft();
+	vOffRight();
+
+	return;
+}
+
+void turnRight(int iDegrees, short iPower) {
+	vOnLeft(iPower);
+	vOnRight(-1 * iPower);
+
+	vWaitForTurn(iDegrees);
+
+	vOffLeft();
+	vOffRight();
+}
+
+void vWaitForTurn(int iDegrees) {
+	bool bTurning;
+	int iGyroVal, iTotalGyro, iDeltaTime;
+	float fAreaUnderVelocity, fAverageGyro, fCumulativeDegrees;
+	bTurning = true;
+	fCumulativeDegrees = 0.0;
+	ClearTimer(T1);
+
+	while(bTurning) {
+		iTotalGyro = 0;
+
+		for(static int i = 0; i < 10; i++) {
+			iGyroVal = abs(HTGYROreadRot(gyro)) < 2 ? 0 : abs(HTGYROreadRot(gyro));
+			iTotalGyro += iGyroVal;
+			wait1Msec(1);
+		}
+
+		fAverageGyro = (iTotalGyro / 10);
+
+		iDeltaTime = time1[T1];
+		ClearTimer(T1);
+
+		fAreaUnderVelocity = ((fAverageGyro * iDeltaTime) / 1000);
+		fCumulativeDegrees += fAreaUnderVelocity;
+
+		if(fCumulativeDegrees >= iDegrees) bTurning = false;
+	}
+
+	return;
+}
 
 void vOffLeft() {
 	vOnLeft(0);
