@@ -48,6 +48,11 @@
 #define PROTO_UPDATE_TIME 100
 #define JOYSTICK_DEADZONE 10
 
+#define DPAD_UP 0
+#define DPAD_DOWN 4
+#define DPAD_LEFT 6
+#define DPAD_RIGHT 2
+
 /* ===== FUNCTIONS ===== */
 
 void vInitializeRobot(void);
@@ -91,6 +96,22 @@ task ReadJoystick1() {
         getJoystickSettings(joystick);
         oLeftMotor.iPower = fJoyToPower(joystick.joy1_y1);
         oRightMotor.iPower = fJoyToPower(joystick.joy1_y2);
+        if (joystick.joy1_TopHat == DPAD_UP) {
+        	oLeftMotor.iPower = 100;
+        	oLeftMotor.iPower = 100;
+      	}
+      	if (joystick.joy1_TopHat == DPAD_DOWN) {
+        	oLeftMotor.iPower = -100;
+        	oLeftMotor.iPower = -100;
+      	}
+      	if (joystick.joy1_TopHat == DPAD_LEFT) {
+        	oLeftMotor.iPower = -100;
+        	oLeftMotor.iPower = 100;
+      	}
+      	if (joystick.joy1_TopHat == DPAD_RIGHT) {
+        	oLeftMotor.iPower = 100;
+        	oLeftMotor.iPower = -100;
+      	}
         wait1Msec(JOYSTICK_UPDATE_TIME);
     }
 }
