@@ -44,7 +44,7 @@
 
 /* ===== DEFINES ===== */
 
-#define INCH_PER_ROTATION 3.14
+#define INCH_PER_ROTATION (3+(7/8))
 
 #define DISTANCE_TO_RACK 30
 #define DISTANCE_BETWEEN_ROWS 10
