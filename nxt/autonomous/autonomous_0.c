@@ -50,6 +50,9 @@
 #define DISTANCE_BETWEEN_ROWS 10
 #define DISTANCE_TO_PLACE 5
 
+#define ARM_UP 0
+#define ARM_DOWN 90
+
 #define DRIVE_SPEED 100
 #define TURN_SPEED 100
 
@@ -92,8 +95,9 @@ task main() {
 }
 
 void vInitializeRobot() {
-    vOffLeft();
+  vOffLeft();
 	vOffRight();
+	servo[arm] = ARM_DOWN;
 }
 
 int iBeacon() {
