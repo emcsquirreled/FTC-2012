@@ -20,42 +20,60 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with Teleop; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin St, Fifth Floor,
  * Boston, MA  02110-1301  USA
  */
 
 
+/* ===== INCLUDES ===== */
 
 #include <JoystickDriver.c>
+
+/* ===== DEFINES ===== */
 
 #define JOYSTICK_UPDATE_TIME 15
 #define MOTOR_UPDATE_TIME 10
 #define PROTO_UPDATE_TIME 100
 #define JOYSTICK_DEADZONE 10
 
+/* ===== FUNCTIONS ===== */
+
 void vInitializeRobot(void);
 float fJoyToPower(signed short iJoy);
 
+/* ===== TASKS ===== */
+
 task ReadJoystick1();
 task UpdateDriveMotors();
+
+/* ===== STRUCTURES ===== */
 
 typedef struct {
     signed byte iPower;
 } oMotor;
 
+/* ===== GLOBALS === */
+
 oMotor oLeftMotor;
 oMotor oRightMotor;
 
+/* ===== CODE ===== */
+
+/* Task Main -- Entry point of the code */
 task main() {
+    // Initialize the robot and wait for the start of the match
     vInitializeRobot();
     waitForStart();
 
+    // Start all tasks
     StartTask(ReadJoystick1);
     StartTask(UpdateDriveMotors);
 
+    // Do nothing, for the tasks do it all
     while(1) wait10Msec(1000);
 }
 
+/* Task ReadJoystick1 --  */
 task ReadJoystick1() {
     while(1) {
         getJoystickSettings(joystick);
