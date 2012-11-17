@@ -113,10 +113,15 @@ int iBeacon() {
 }
 
 void vReleaseRing() {
+	vResetEncoders
+	motor[claw] = -100;
+	while(nMotorEncoder[claw] > -3000);
+	motor[claw] = 0;
 	return;
 }
 
 void vResetEncoders() {
+	nMotorEncoder[claw] = 0;
 	nMotorEncoder[encoderLeft] = 0;
 	nMotorEncoder[encoderRight] = 0;
 	return;
