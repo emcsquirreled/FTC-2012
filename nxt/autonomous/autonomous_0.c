@@ -1,6 +1,17 @@
 #pragma config(Hubs,  S1, HTMotor,  HTServo,  none,     none)
-#pragma config(Motor,  mtr_S1_C1_1,     driveLeft,     tmotorNormal, openLoop)
-#pragma config(Motor,  mtr_S1_C1_2,     driveRight,    tmotorNormal, openLoop)
+#pragma config(Sensor, S4,     gyro,           sensorI2CHiTechnicGyro)
+#pragma config(Motor,  motorA,           ,             tmotorNXT, openLoop, encoder)
+#pragma config(Motor,  motorB,          encoderLeft,   tmotorNXT, PIDControl, encoder)
+#pragma config(Motor,  motorC,          encoderRight,  tmotorNXT, PIDControl, encoder)
+#pragma config(Motor,  mtr_S1_C1_1,     driveLeft,     tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C1_2,     driveRight,    tmotorTetrix, openLoop)
+#pragma config(Servo,  srvo_S1_C2_1,    servo1,               tServoNone)
+#pragma config(Servo,  srvo_S1_C2_2,    servo2,               tServoNone)
+#pragma config(Servo,  srvo_S1_C2_3,    servo3,               tServoNone)
+#pragma config(Servo,  srvo_S1_C2_4,    servo4,               tServoNone)
+#pragma config(Servo,  srvo_S1_C2_5,    servo5,               tServoNone)
+#pragma config(Servo,  srvo_S1_C2_6,    servo6,               tServoNone)
+
 
 /*
  * autonomous_0.c
@@ -20,20 +31,22 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with Autonomous; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin St, Fifth Floor,
  * Boston, MA  02110-1301  USA
  */
 
 /* ===== INCLUDES ===== */
 
 #include <JoystickDriver.c>
+#include "../includes/rdpartyrobotcdr-3.1/drivers/hitechnic-gyro.h"
 
 /* ===== DEFINES ===== */
 
 #define INCH_PER_ROTATION 3.14
 
 #define DISTANCE_TO_RACK 30
-#define DISTANCE_BETWEEN_PEGS 10
+#define DISTANCE_BETWEEN_ROWS 10
+#define DISTANCE_TO_PLACE 5
 
 #define DRIVE_SPEED 100
 #define TURN_SPEED 100
@@ -45,10 +58,14 @@ void vMoveForward(int iDistance, short iPower);
 void vMoveBackward(int iDistance, short iPower);
 void vTurnLeft(int iDegrees, short iPower);
 void vTurnRight(int iDegrees, short iPower);
+void vWaitForTurn(int iDegrees);
 void vOnLeft(short iPower);
 void vOnRight(short iPower);
 void vOffLeft();
-void vOffRight(); 
+void vOffRight();
+void vResetEncoders();
+void vReleaseRing();
+int iBeacon();
 
 /* ===== CODE ===== */
 
@@ -57,19 +74,18 @@ task main() {
     // Initialize the robot and wait for the start of the match
     vInitializeRobot();
     waitForStart();
- 
-	vMoveForwards(DISTANCE_TO_RACK, DRIVE_SPEED);
+
+	vMoveForward(DISTANCE_TO_RACK, DRIVE_SPEED);
 	vTurnRight(45, TURN_SPEED);
-	
+
 	while(!iBeacon()) {
-		vMoveForwards(DISTANCE_BETWEEN_ROWS, DRIVE_SPEED);
+		vMoveForward(DISTANCE_BETWEEN_ROWS, DRIVE_SPEED);
 	}
 
 	vTurnLeft(90, TURN_SPEED);
-	vMoveForwards(DISTANCE_TO_PLACE, DRIVE_SPEED);
+	vMoveForward(DISTANCE_TO_PLACE, DRIVE_SPEED);
 	vReleaseRing();
 
-    // Do nothing, for we are done now.
     while(1) wait10Msec(1000);
 }
 
@@ -78,26 +94,40 @@ void vInitializeRobot() {
 	vOffRight();
 }
 
-void moveForward(int iDistance, short iPower) {
-	int iTargetVal = iDegrees * INCH_PER_ROTATION;
+int iBeacon() {
+	return 1;
+}
+
+void vReleaseRing() {
+	return;
+}
+
+void vResetEncoders() {
+	nMotorEncoder[encoderLeft] = 0;
+	nMotorEncoder[encoderRight] = 0;
+	return;
+}
+
+void vMoveForward(int iDistance, short iPower) {
+	int iTargetVal = iDistance * INCH_PER_ROTATION;
 
 	vOnLeft(iPower);
 	vOnRight(iPower);
 
-	while(iEncoderVal < iTargetVal);
-	
+	while(nMotorEncoder[encoderLeft] < iTargetVal || nMotorEncoder[encoderRight] < iTargetVal);
+
 	vOffLeft();
 	vOffRight();
 
 	return;
 }
 
-void moveBackward(int iDistance, short iPower) {
-	moveForward(-1 * iDistance, -1 * iPower);
+void vMoveBackward(int iDistance, short iPower) {
+	vMoveForward(-1 * iDistance, -1 * iPower);
 	return;
 }
 
-void turnLeft(int iDegrees, short iPower) {
+void vTurnLeft(int iDegrees, short iPower) {
 	vOnLeft(-1 * iPower);
 	vOnRight(iPower);
 
@@ -109,7 +139,7 @@ void turnLeft(int iDegrees, short iPower) {
 	return;
 }
 
-void turnRight(int iDegrees, short iPower) {
+void vTurnRight(int iDegrees, short iPower) {
 	vOnLeft(iPower);
 	vOnRight(-1 * iPower);
 
@@ -160,12 +190,12 @@ void vOffRight() {
 	return;
 }
 
-void vOnLeft(short iPower = 100) {
+void vOnLeft(short iPower) {
 	motor[driveLeft] = iPower;
 	return;
 }
 
-void vOnRight(short iPower = 100) {
+void vOnRight(short iPower) {
 	motor[driveRight] = iPower;
 	return;
 }
