@@ -20,7 +20,7 @@
 task main()
 {
 	motor[claw] = -100;
-	while(nMotorEncoder > -3000) ;
+	while(nMotorEncoder[claw] > -3000) ;
 	motor[claw] = 0;
 	servo[arm] = ARM_DOWN;
 }
