@@ -82,7 +82,10 @@ typedef struct {
 oMotor oLeftMotor;
 oMotor oRightMotor;
 oMotor oClaw;
+oMotor oRamp;
 oServo oArm;
+
+byte iCanDeploy;
 
 /* ===== CODE ===== */
 
@@ -124,6 +127,11 @@ task ReadJoystick1() {
         	oLeftMotor.iPower = 100;
         	oLeftMotor.iPower = -100;
       	}
+      	if(joy1Btn(9) && joy1Btn(10)) {
+      		iCanDeploy = 1;
+      	} else {
+      		iCanDeploy = 0;
+      	}
         wait1Msec(JOYSTICK_UPDATE_TIME);
     }
 }
@@ -146,9 +154,14 @@ task ReadJoystick2() {
       		oClaw.iPower = 0;
       	}
 
-        if(joy2Btn(9) && joy2Btn(10)) {
-				} else {
-					// RETRACT RAMP
+      	if(iCanDeploy) {
+	        if(joy2Btn(9) && joy2Btn(10)) {
+	        	oRamp.iPower = 100;
+					} else if(joy2Btn(7)) {
+						oRamp.iPower = -100;
+	        } else {
+						oRamp.iPower = 0;
+					}
 				}
         wait1Msec(JOYSTICK_UPDATE_TIME);
     }
