@@ -1,4 +1,5 @@
 #pragma config(Hubs,  S1, HTMotor,  HTServo,  none,     none)
+#pragma config(Sensor, S3,     infrared,       sensorHiTechnicIRSeeker1200)
 #pragma config(Sensor, S4,     gyro,           sensorI2CHiTechnicGyro)
 #pragma config(Motor,  motorA,           ,             tmotorNXT, openLoop, encoder)
 #pragma config(Motor,  motorB,          encoderLeft,   tmotorNXT, PIDControl, encoder)

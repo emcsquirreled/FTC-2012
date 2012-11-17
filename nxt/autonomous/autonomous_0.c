@@ -1,4 +1,5 @@
 #pragma config(Hubs,  S1, HTMotor,  HTServo,  none,     none)
+#pragma config(Sensor, S3,     infrared,       sensorHiTechnicIRSeeker1200)
 #pragma config(Sensor, S4,     gyro,           sensorI2CHiTechnicGyro)
 #pragma config(Motor,  motorA,           ,             tmotorNXT, openLoop, encoder)
 #pragma config(Motor,  motorB,          encoderLeft,   tmotorNXT, PIDControl, encoder)
@@ -11,7 +12,6 @@
 #pragma config(Servo,  srvo_S1_C2_4,    servo4,               tServoNone)
 #pragma config(Servo,  srvo_S1_C2_5,    servo5,               tServoNone)
 #pragma config(Servo,  srvo_S1_C2_6,    servo6,               tServoNone)
-
 
 /*
  * autonomous_0.c
@@ -39,6 +39,7 @@
 
 #include <JoystickDriver.c>
 #include "../includes/rdpartyrobotcdr-3.1/drivers/hitechnic-gyro.h"
+#include "../includes/rdpartyrobotcdr-3.1/drivers/hitechnic-irseeker-v2.h"
 
 /* ===== DEFINES ===== */
 
@@ -95,7 +96,15 @@ void vInitializeRobot() {
 }
 
 int iBeacon() {
-	return 1;
+	int irSensor[5];
+	int val;
+  HTIRS2readAllACStrength(infrared, irSensor[0], irSensor[1], irSensor[2], irSensor[3], irSensor[4]);
+  if((irSensor[1] != 0 && irSensor[2] != 0) && (abs(irSensor[1] - irSensor[2]) < 2)) {
+  	val = 1;
+	} else {
+		val = 0;
+	}
+	return val;
 }
 
 void vReleaseRing() {
