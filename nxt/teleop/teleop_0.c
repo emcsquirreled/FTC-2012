@@ -53,6 +53,11 @@
 #define DPAD_LEFT 6
 #define DPAD_RIGHT 2
 
+#define ARM_UP 0
+#define ARM_DOWN 90
+
+#define SERVO_INTERVAL 5
+
 /* ===== FUNCTIONS ===== */
 
 void vInitializeRobot(void);
@@ -61,7 +66,9 @@ float fJoyToPower(signed short iJoy);
 /* ===== TASKS ===== */
 
 task ReadJoystick1();
+task ReadJoystick2();
 task UpdateDriveMotors();
+task UpdateManipulators();
 
 /* ===== STRUCTURES ===== */
 
@@ -69,10 +76,16 @@ typedef struct {
     signed byte iPower;
 } oMotor;
 
+typedef struct {
+	unsigned byte iPosition;
+} oServo;
+
 /* ===== GLOBALS === */
 
 oMotor oLeftMotor;
 oMotor oRightMotor;
+oMotor oClaw;
+oServo oArm;
 
 /* ===== CODE ===== */
 
@@ -84,7 +97,9 @@ task main() {
 
     // Start all tasks
     StartTask(ReadJoystick1);
+    StartTask(ReadJoystick2);
     StartTask(UpdateDriveMotors);
+    StartTask(UpdateManipulators);
 
     // Do nothing, for the tasks do it all
     while(1) wait10Msec(1000);
@@ -116,6 +131,33 @@ task ReadJoystick1() {
     }
 }
 
+task ReadJoystick2() {
+	while(1) {
+        getJoystickSettings(joystick);
+        if (joystick.joy2_TopHat == DPAD_UP) {
+        	oArm.iPosition += SERVO_INTERVAL;
+      	}
+      	if (joystick.joy2_TopHat == DPAD_DOWN) {
+        	oArm.iPosition -= SERVO_INTERVAL;
+      	}
+
+      	if(joy2Btn(8)) {
+      		oClaw.iPower = 100;
+      	} else if(joy2Btn(6)) {
+      		oClaw.iPower = -100;
+      	} else {
+      		oClaw.iPower = 0;
+      	}
+
+        if(joy2Btn(9) && joy2Btn(10)) {
+					// DEPLOY RAMP
+				} else {
+					// RETRACT RAMP
+				}
+        wait1Msec(JOYSTICK_UPDATE_TIME);
+    }
+}
+
 task UpdateDriveMotors() {
     while(1) {
         motor[driveLeft] = oLeftMotor.iPower;
@@ -124,9 +166,19 @@ task UpdateDriveMotors() {
     }
 }
 
+task UpdateManipulators() {
+	while(1) {
+		motor[claw] = oClaw.iPower;
+		servo[arm] = oArm.iPosition;
+		wait1Msec(MOTOR_UPDATE_TIME);
+	}
+}
+
 void vInitializeRobot() {
     oLeftMotor.iPower = 0;
     oRightMotor.iPower = 0;
+    oClaw.iPower = 0;
+    oArm.iPosition = ARM_DOWN;
 }
 
 float fJoyToPower(signed short iJoy) {
