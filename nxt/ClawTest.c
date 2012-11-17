@@ -6,10 +6,10 @@ task main()
 {
 	while(1) {
 		while(SensorValue[touch]) {
-			motor[claw] = 100;
+			motor[claw] = -100;
 			nxtDisplayTextLine(1, "%d", nMotorEncoder[claw]);
 			wait10Msec(1);
 		}
-		motor[claw] = 0;
+		motor[claw] = 100;
 	}
 }
