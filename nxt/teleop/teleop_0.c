@@ -202,6 +202,7 @@ task Debug() {
 		nxtDisplayCenteredTextLine(1, "LEFT: %d", oLeftMotor.iPower);
 		nxtDisplayCenteredTextLine(2, "RIGHT: %d", oRightMotor.iPower);
 		nxtDisplayCenteredTextLine(3, "ARM: %d", oArm.iPosition);
+		nxtDisplayCenteredTextLine(4, "CLAW: %d", nMotorEncoder[claw]);
 		wait10Msec(1);
 	}
 }
