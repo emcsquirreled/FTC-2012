@@ -16,9 +16,5 @@
 
 task main()
 {
-	nMotorEncoder[claw] = 0;
-	motor[claw] = 100;
-	while(nMotorEncoder[claw] > 3000);
-	motor[claw] = 0;
-	servo[arm] = ARM_DOWN;
+	while(1) motor[claw] = 100;
 }
