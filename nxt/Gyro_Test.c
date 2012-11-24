@@ -28,8 +28,7 @@
 /* ===== INCLUDES ===== */
 
 #include <JoystickDriver.c>
-#include "../includes/rdpartyrobotcdr-3.1/drivers/hitechnic-gyro.h"
-#include "../includes/rdpartyrobotcdr-3.1/drivers/hitechnic-irseeker-v2.h"
+#include "includes/rdpartyrobotcdr-3.1/drivers/hitechnic-gyro.h"
 
 /* ===== DEFINES ===== */
 
@@ -47,9 +46,6 @@
 
 /* ===== FUNCTIONS ===== */
 
-void vInitializeRobot(void);
-void vMoveForward(int iDistance, short iPower);
-void vMoveBackward(int iDistance, short iPower);
 void vTurnLeft(int iDegrees, short iPower);
 void vTurnRight(int iDegrees, short iPower);
 void vWaitForTurn(int iDegrees);
@@ -57,80 +53,16 @@ void vOnLeft(short iPower);
 void vOnRight(short iPower);
 void vOffLeft();
 void vOffRight();
-void vResetEncoders();
-void vReleaseRing();
-int iBeacon();
 
 /* ===== CODE ===== */
 
 /* Task Main -- Entry point of the code */
 task main() {
-	vTurnLeft(90, TURN_SPEED);
-}
-
-void vInitializeRobot() {
-	vOffLeft();
-	vOffRight();
-	servo[arm] = ARM_DOWN;
-}
-
-int iBeacon() {
-	int irSensor[5];
-	int val;
-	HTIRS2readAllACStrength(infrared, irSensor[0], irSensor[1], irSensor[2], irSensor[3], irSensor[4]);
-	if((irSensor[1] != 0 && irSensor[2] != 0) && (abs(irSensor[1] - irSensor[2]) < 2)) {
-		val = 1;
-	} else {
-		val = 0;
-	}
-	return val;
-}
-
-void vReleaseRing() {
-	vResetEncoders();
-	motor[claw] = -100;
-	while(nMotorEncoder[claw] > -3000);
-	motor[claw] = 0;
-	return;
-}
-
-void vResetEncoders() {
-	nMotorEncoder[claw] = 0;
-	nMotorEncoder[encoderLeft] = 0;
-	nMotorEncoder[encoderRight] = 0;
-	return;
-}
-
-void vMoveForward(int iDistance, short iPower) {
-	int iTargetVal = iDistance * INCHES_PER_DEGREE;
-
-	vResetEncoders();
-
-	vOnLeft(iPower);
-	vOnRight(iPower);
-
-	while(nMotorEncoder[encoderLeft] < iTargetVal || nMotorEncoder[encoderRight] < iTargetVal);
-
-	vOffLeft();
-	vOffRight();
-
-	return;
-}
-
-void vMoveBackward(int iDistance, short iPower) {
-	int iTargetVal = (-1 * iDistance) * INCHES_PER_DEGREE;
-
-	vResetEncoders();
-
-	vOnLeft(-1 * iPower);
-	vOnRight(-1 * iPower);
-
-	while(nMotorEncoder[encoderLeft] > iTargetVal || nMotorEncoder[encoderRight] > iTargetVal);
-
-	vOffLeft();
-	vOffRight();
-
-	return;
+	HTGYROstartCal(gyro);
+	wait1Msec(1000);
+	vTurnLeft(180, 25);
+	wait1Msec(500);
+	vTurnRight(180, 25);
 }
 
 void vTurnLeft(int iDegrees, short iPower) {
@@ -157,30 +89,24 @@ void vTurnRight(int iDegrees, short iPower) {
 
 void vWaitForTurn(int iDegrees) {
 	bool bTurning;
-	int iGyroVal, iTotalGyro, iDeltaTime;
-	float fAreaUnderVelocity, fAverageGyro, fCumulativeDegrees;
+	float fAreaUnderVelocity, fAverageGyro, fCumulativeDegrees, fGyroVal, fTotalGyro, fDeltaTime;
 	bTurning = true;
 	fCumulativeDegrees = 0.0;
+
 	ClearTimer(T1);
-
 	while(bTurning) {
-		iTotalGyro = 0;
-
-		for(static int i = 0; i < 10; i++) {
-		iGyroVal = abs(HTGYROreadRot(gyro)) < 2 ? 0 : abs(HTGYROreadRot(gyro));
-			iTotalGyro += iGyroVal;
+		fTotalGyro = 0.0;
+		for(int i = 0; i < 10; i++) {
+			fGyroVal = abs(HTGYROreadRot(gyro));
+			fTotalGyro += fGyroVal;
 			wait1Msec(1);
 		}
-
-		fAverageGyro = (iTotalGyro / 10);
-
-		iDeltaTime = time1[T1];
+		fAverageGyro = fTotalGyro / 10;
+		fDeltaTime = (float) time1[T1];
 		ClearTimer(T1);
-
-		fAreaUnderVelocity = ((fAverageGyro * iDeltaTime) / 1000);
+		fAreaUnderVelocity = fAverageGyro * (fDeltaTime / 1000);
 		fCumulativeDegrees += fAreaUnderVelocity;
-
-		if(fCumulativeDegrees >= iDegrees) bTurning = false;
+		if((int) fCumulativeDegrees >= iDegrees) bTurning = false;
 	}
 
 	return;
