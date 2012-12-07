@@ -1,5 +1,5 @@
-E=MC SQUIRRELED -- FTC Team 4508 -- Ring It Up! Code Base
-=========================================================
+E=MC SQUIRRELED -- Ring It Up! Code Base
+========================================
 
 
 
@@ -22,17 +22,17 @@ ORGANIZATION
 
 RobotC code for the NXT
 
-./nxt/teleop/
+	./nxt/teleop/
 
-Teleop code for the NXT
+	Teleop code for the NXT
 
-./nxt/autonomous/
+	./nxt/autonomous/
 
-Autonomous code for the NXT
+	Autonomous code for the NXT
 
-./nxt/libraries/
+	./nxt/libraries/
 
-Libraries for RobotC, custom and otherwise
+	Libraries for RobotC, custom and otherwise
 
 
 CREDITS
@@ -41,7 +41,11 @@ CREDITS
 Unless otherwise stated, all code is written by mfabel@github.com.
 
 Thanks to my coach for his tireless answering of dumb, brainless questions.
+
 Thanks to Skinkworks, Sparbots, and the other RobotC masters of the FTC forum.
+
 Thanks to RobotC for a great product.
+
 Thanks to Xander for great drivers and sample code.
+
 Thanks to FTC teams 4187 The Byte Riders (byteriders.wordpress.com) and ???? Very-Able (very-ableftc.github.com) for cooperating with us on nearly everything this season.
