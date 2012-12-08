@@ -17,7 +17,7 @@
  *
  * Teleop is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
-' * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  *
  * Teleop is distributed in the hope that it will be useful,
@@ -149,23 +149,15 @@ task ReadJoystick2() {
 			oTurnTable.iPower = 50;
 		}
 
-		/*
-		 * Servos are flat at position=0
-		 * tilted up is positive
-		 * tilted down is negative
-		 */
 		if(joy2Btn(6)) {
 			oCup.iPosition += SERVO_INTERVAL;
 		}
 		if(joy2Btn(8)) {
 			oCup.iPosition -= SERVO_INTERVAL;
 		}
-		if (oCup.iPosition < -127) {
-			oCup.iPosition = -127;
-		}
-		if (oCup.iPosition > 127) {
-			oCup.iPosition = 127;
-		}
+		oCup.iPosition = oCup.iPosition > 127 ? 127 : oCup.iPosition;
+		oCup.iPosition = oCup.iPosition < -127 ? -127 : oCup.iPosition;
+
 		wait1Msec(JOYSTICK_UPDATE_TIME);
     }
 }
@@ -184,13 +176,6 @@ task UpdateManipulators() {
         motor[lift] = oLift.iPower;
 		servo[cupLeft] = 128 - oCup.iPosition;
 		servo[cupRight] = 128 + oCup.iPosition;
-		/*
-		 * NEED TO ADD:
-		 * oTurnTable.iPower
-		 * oLift.iPower
-		 * oCup.iPosition
-		 * Conversion from oCup.iPosition to actual servo position goes here
-		 */
 		wait1Msec(MOTOR_UPDATE_TIME);
 	}
 }
@@ -198,10 +183,11 @@ task UpdateManipulators() {
 task Debug() {
 	while(1) {
 		eraseDisplay();
-		nxtDisplayCenteredTextLine(1, "LEFT: %d", servo[cupLeft]);
-		nxtDisplayCenteredTextLine(2, "RIGHT: %d", servo[cupRight]);
-		nxtDisplayCenteredTextLine(3, "ARM: %d", oCup.iPosition);
-//		nxtDisplayCenteredTextLine(4, "CLAW: %d", nMotorEncoder[claw]);
+		nxtDisplayCenteredTextLine(1, "LEFT: %d", oLeftMotor.iPower);
+		nxtDisplayCenteredTextLine(2, "RIGHT: %d", oRightMotor.iPower);
+		nxtDisplayCenteredTextLine(3, "LIFT: %d", oLift.iPower);
+		nxtDisplayCenteredTextLine(4, "TURN: %d", oTurnTable.iPower);
+		nxtDisplayCenteredTextLine(5, "CUP: %d", oCup.iPosition);
 		wait10Msec(1);
 	}
 }
