@@ -55,7 +55,9 @@
 /* ===== FUNCTIONS ===== */
 
 void vInitializeRobot(void);
-int iJoyToPower(signed short iJoy);
+int fJoyToPower(signed short iJoy);
+int iPosToValLeft(int pos);
+int iPosToValRight(int pos);
 
 /* ===== TASKS ===== */
 
@@ -107,8 +109,8 @@ task main() {
 task ReadJoystick1() {
     while(1) {
         getJoystickSettings(joystick);
-        oLeftMotor.iPower = iJoyToPower(joystick.joy1_y1);
-        oRightMotor.iPower = iJoyToPower(joystick.joy1_y2);
+        oLeftMotor.iPower = fJoyToPower(joystick.joy1_y1);
+        oRightMotor.iPower = fJoyToPower(joystick.joy1_y2);
         if (joystick.joy1_TopHat == DPAD_UP) {
         	oLeftMotor.iPower = 100;
         	oRightMotor.iPower = 100;
@@ -174,8 +176,8 @@ task UpdateManipulators() {
 	while(1) {
         motor[turntable] = oTurnTable.iPower;
         motor[lift] = oLift.iPower;
-		servo[cupLeft] = 128 - oCup.iPosition;
-		servo[cupRight] = 128 + oCup.iPosition;
+		servo[cupLeft] = iPosToValLeft(oCup.iPosition);
+		servo[cupRight] = iPosToValRight(oCup.iPosition);
 		wait1Msec(MOTOR_UPDATE_TIME);
 	}
 }
@@ -200,11 +202,19 @@ void vInitializeRobot() {
     oCup.iPosition = CUP_FLAT;
 }
 
-float iJoyToPower(signed short iJoy) {
+float fJoyToPower(signed short iJoy) {
     float fPower;
     fPower = (float) (((float) iJoy) / 127);
     fPower = pow(fPower, 2);
     fPower *= iJoy / abs(iJoy);
     fPower *= 100;
     return (int) fPower;
+}
+
+int iPosToValLeft(int pos) {
+	return 128 - pos;
+}
+
+int iPosToValRight(int pos) {
+	return 128 + pos;
 }
