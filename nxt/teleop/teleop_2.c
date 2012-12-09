@@ -148,10 +148,10 @@ task ReadJoystick2() {
 		getJoystickSettings(joystick);
 		oLift.iPower = 0;
 		if(joystick.joy2_TopHat == DPAD_UP) {
-			oLift.iPower = 60;
+			oLift.iPower = 75;
 		}
 		if(joystick.joy2_TopHat == DPAD_DOWN) {
-			oLift.iPower = -50;
+			oLift.iPower = -5;
 		}
 
 		oTurnTable.iPower = 0;
@@ -227,8 +227,8 @@ void vInitializeRobot() {
 float fJoyToPower(signed short iJoy) {
     float fPower;
     fPower = (float) (((float) iJoy) / 127);
-    /* OLD VERSION -- STABLE -- fPower = pow(fPower, 2); */
-    pow(fPower, 3); /* Testing cubic responce */
+    fPower = pow(fPower, 2);
+    /* FAILED -- pow(fPower, 3); /* Testing cubic responce */
     fPower *= iJoy / abs(iJoy);
     fPower *= 100;
     return (int) fPower;
