@@ -134,7 +134,7 @@ task ReadJoystick1() {
         	oRightMotor.iPower = -100;
       	}
 
-		if(!joy1Btn(8)) {
+		if(joy1Btn(8)) {
 			oLeftMotor.iPower /= 2;
 			oRightMotor.iPower /= 2;
 		}
