@@ -1,5 +1,8 @@
 *.o
 *.img
+*.rxe
+
+FTCConfig.txt
 
 kernel/*
 includes/
