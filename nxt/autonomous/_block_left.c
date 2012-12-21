@@ -22,7 +22,7 @@ task main()
 	motor[driveRight] = 100;
 	wait10Msec(200);
 	motor[driveLeft] = 0;
-	wait10Msec(50);
+	wait10Msec(100);
 	motor[driveLeft] = -100;
 	wait10Msec(100);
 	motor[driveLeft] = 0;
