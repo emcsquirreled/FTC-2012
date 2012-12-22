@@ -71,6 +71,7 @@ oMotor oLeftMotor;
 oMotor oRightMotor;
 oMotor oTurnTable;
 oMotor oLift;
+int turntableEnabled;
 
 /* ===== CODE ===== */
 
@@ -115,6 +116,12 @@ task ReadJoystick1() {
         	oRightMotor.iPower = -100;
       	}
 
+      	if(joy1Btn(9) && joy1Btn(10)) {
+      		turntableEnabled = 1;
+      	} else {
+      		turntableEnabled = 0;
+    	}
+
         wait1Msec(JOYSTICK_UPDATE_TIME);
     }
 }
@@ -132,10 +139,10 @@ task ReadJoystick2() {
 
 		oTurnTable.iPower = 0;
 		if(joystick.joy2_TopHat == DPAD_LEFT) {
-			oTurnTable.iPower = -20;
+			oTurnTable.iPower = -25;
 		}
 		if(joystick.joy2_TopHat == DPAD_RIGHT) {
-			oTurnTable.iPower = 20;
+			oTurnTable.iPower = 25;
 		}
 
 		wait1Msec(JOYSTICK_UPDATE_TIME);
@@ -152,19 +159,25 @@ task UpdateDriveMotors() {
 
 task UpdateManipulators() {
 	while(1) {
-        motor[turntable] = oTurnTable.iPower;
+		if(turntableEnabled) {
+        	motor[turntable] = oTurnTable.iPower;
+    	} else {
+    		motor[turntable] = 0;
+    	}
         motor[lift] = oLift.iPower;
 		wait1Msec(MOTOR_UPDATE_TIME);
 	}
 }
 
 task Debug() {
+	disableDiagnosticsDisplay();
 	while(1) {
 		eraseDisplay();
 		nxtDisplayCenteredTextLine(1, "LEFT: %d", oLeftMotor.iPower);
 		nxtDisplayCenteredTextLine(2, "RIGHT: %d", oRightMotor.iPower);
 		nxtDisplayCenteredTextLine(3, "LIFT: %d", oLift.iPower);
 		nxtDisplayCenteredTextLine(4, "TURN: %d", oTurnTable.iPower);
+		nxtDisplayCenteredTextLine(5, "CAN TURN? %d", turntableEnabled);
 		wait10Msec(1);
 	}
 }
@@ -173,15 +186,14 @@ void vInitializeRobot() {
     oLeftMotor.iPower = 0;
     oRightMotor.iPower = 0;
     oTurnTable.iPower = 0;
+    turntableEnabled = 0;
     oLift.iPower = 0;
 }
 
 float fJoyToPower(signed short iJoy) {
     float fPower;
     fPower = (float) (((float) iJoy) / 127);
-    /* fPower = pow(fPower, 4); /* n^4 scaling? */
-    pow(fPower, 3); /* Testing cubic responce */
-    /* fPower *= iJoy / abs(iJoy); */
+    pow(fPower, 3);
     fPower *= 100;
     return (int) fPower;
 }
