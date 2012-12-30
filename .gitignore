@@ -2,6 +2,8 @@
 *.img
 *.rxe
 
+*.swp
+
 FTCConfig.txt
 
 kernel/*
