@@ -3,6 +3,7 @@
 *.rxe
 
 *.swp
+*.temp
 
 FTCConfig.txt
 
