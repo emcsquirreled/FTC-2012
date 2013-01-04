@@ -48,11 +48,12 @@
 #define DPAD_RIGHT 2
 
 #define RAISE_THE_TOPSAIL 255
-#define LOWER_THE_TOSAIL 0
+#define LOWER_THE_TOPSAIL 0
 
 /* ===== FUNCTIONS ===== */
 
 void vInitializeRobot(void);
+float fJoyToPower(signed short iJoy);
 /* ===== TASKS ===== */
 
 task ReadJoystick1();
@@ -68,7 +69,7 @@ typedef struct {
 } oMotor;
 
 typedef struct {
-	signed byte iPosition;
+	unsigned byte iPosition;
 } oServo;
 
 /* ===== GLOBALS === */
@@ -173,11 +174,7 @@ task UpdateDriveMotors() {
 
 task UpdateManipulators() {
 	while(1) {
-		if(turntableEnabled) {
-			motor[turntable] = oTurnTable.iPower;
-    		} else {
-			motor[turntable] = 0;
-		}
+		motor[turntable] = oTurnTable.iPower;
 		servo[irServo] = oMainMast.iPosition;
 		motor[lift] = oLift.iPower;
 		wait1Msec(MOTOR_UPDATE_TIME);
