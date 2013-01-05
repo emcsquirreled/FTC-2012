@@ -1,5 +1,11 @@
 *.o
 *.img
+*.rxe
+
+*.swp
+*.temp
+
+FTCConfig.txt
 
 kernel/*
 includes/
