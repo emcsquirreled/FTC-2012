@@ -265,20 +265,48 @@ void vJoyToPower(robot *oRobot, my_controller *oController) {
 			fRightPower = fRightPower >= DEADZONE ? fRightPower : 0;
 			break;
 		case ARC_LIN:
-			float fThrottle, fSteering;
-			/* Set the throttle to [-1, 1] */
-			fThrottle = (float) (((float) oController->oLeftJoystick.y) / 127);
-			/* Set the steering to [0, 100] */
-			fSteering = (float) (((float) oController->oRightJoystick.x) / 127);
-			fSteering *= 50;
-			fSteering += 50;
-			/* Scale the throttle by the steering */
-			fLeftPower = fThrottle * fSteering;
-			fRightPower = fThrottle * (100 - fSteering);
+			if(abs(oController->oLeftJoystick.y) > DEADZONE) {
+				fLeftPower = 100 * ((float) (((float) oController->oLeftJoystick.y) / 127));
+				fRightPower = 100 * ((float) (((float) oController->oLeftJoystick.y) / 127));
+			} else if(abs(oController->oRightJoystick.x) > DEADZONE) {
+				fLeftPower = -100 * ((float) (((float) oController->oRightJoystick.x) / 127));
+				fRightPower = 100 * ((float) (((float) oController->oRightJoystick.x) / 127));
+			} else {
+				fLeftPower = 0;
+				fRightPower = 0;
+			}
 			break;
 		case ARC_EXP:
+			if(abs(oController->oLeftJoystick.y) > DEADZONE) {
+				fLeftPower = (float) (((float) oController->oLeftJoystick.y) / 127);
+				fRightPower = (float) (((float) oController->oLeftJoystick.y) / 127);
+				pow(fLeftPower, 3);
+				pow(fRightPower, 3);
+				fLeftPower *= 100;
+				fRightPower *= 100;
+			} else if(abs(oController->oRightJoystick.x) > DEADZONE) {
+				fLeftPower = (float) (((float) oController->oRightJoystick.x) / 127);
+				fRightPower = (float) (((float) oController->oRightJoystick.x) / 127);
+				pow(fLeftPower, 3);
+				pow(fRightPower, 3);
+				fLeftPower *= -100;
+				fRightPower *= 100;
+			} else {
+				fLeftPower = 0;
+				fRightPower = 0;
+			}
 			break;
 		case ARC_LOW:
+			if(abs(oController->oLeftJoystick.y) > DEADZONE) {
+				fLeftPower = 50 * ((float) (((float) oController->oLeftJoystick.y) / 127));
+				fRightPower = 50 * ((float) (((float) oController->oLeftJoystick.y) / 127));
+			} else if(abs(oController->oRightJoystick.x) > DEADZONE) {
+				fLeftPower = -50 * ((float) (((float) oController->oRightJoystick.x) / 127));
+				fRightPower = 50 * ((float) (((float) oController->oRightJoystick.x) / 127));
+			} else {
+				fLeftPower = 0;
+				fRightPower = 0;
+			}
 			break;
 		default:
 			/* Do Nothing */
