@@ -57,7 +57,6 @@ task ReadJoystick1();
 task ReadJoystick2();
 task UpdateDriveMotors();
 task UpdateManipulators();
-task Debug();
 
 /* ===== STRUCTURES ===== */
 
@@ -86,8 +85,6 @@ task main() {
     StartTask(ReadJoystick2);
     StartTask(UpdateDriveMotors);
     StartTask(UpdateManipulators);
-
-//    StartTask(Debug);
 
     // Do nothing, for the tasks do it all
     while(1) wait10Msec(1000);
@@ -139,11 +136,9 @@ task ReadJoystick2() {
 
 		oTurnTable.iPower = 0;
 		if(joystick.joy2_TopHat == DPAD_LEFT) {
-//			oTurnTable.iPower = -100;
 			oTurnTable.iPower = -30;
 		}
 		if(joystick.joy2_TopHat == DPAD_RIGHT) {
-//			oTurnTable.iPower = 100;
 			oTurnTable.iPower = 30;
 		}
 
@@ -161,26 +156,9 @@ task UpdateDriveMotors() {
 
 task UpdateManipulators() {
 	while(1) {
-//		if(turntableEnabled) {
-        	motor[turntable] = oTurnTable.iPower;
-//    	} else {
-//    		motor[turntable] = 0;
-//    	}
+        motor[turntable] = oTurnTable.iPower;
         motor[lift] = oLift.iPower;
 		wait1Msec(MOTOR_UPDATE_TIME);
-	}
-}
-
-task Debug() {
-	disableDiagnosticsDisplay();
-	while(1) {
-		eraseDisplay();
-		nxtDisplayCenteredTextLine(1, "LEFT: %d", oLeftMotor.iPower);
-		nxtDisplayCenteredTextLine(2, "RIGHT: %d", oRightMotor.iPower);
-		nxtDisplayCenteredTextLine(3, "LIFT: %d", oLift.iPower);
-		nxtDisplayCenteredTextLine(4, "TURN: %d", oTurnTable.iPower);
-		nxtDisplayCenteredTextLine(5, "CAN TURN? %d", turntableEnabled);
-		wait10Msec(1);
 	}
 }
 
@@ -204,10 +182,5 @@ float fJoyToPower(signed short iJoy) {
 	} else if (fPower < -100) {
 		fPower = -100;
 	}
-//    fPower = (float) (((float) iJoy) / 127);
-//    pow(fPower, 3);
-//    if (abs(fPower) < .2) {fPower = 0;}
-//    fPower *= 100;
-//    fPower *= 100;
     return fPower;
 }
