@@ -50,8 +50,8 @@
 #define DPAD_LEFT 6
 #define DPAD_RIGHT 2
 
-#define RAISE_THE_TOPSAIL 200
-#define LOWER_THE_TOPSAIL 50
+#define RAISE_THE_TOPSAIL 255
+#define LOWER_THE_TOPSAIL 10
 
 /* ===== TASKS ===== */
 
@@ -67,13 +67,18 @@ task Debug();
    are different. This assures that this enum will always
    work, even across compilers and compiler versions */
 typedef enum {
-	TNK_LIN = 0,
-	TNK_EXP = 1,
-	TNK_LOW = 2,
-	ARC_LIN = 3,
-	ARC_EXP = 4,
-	ARC_LOW = 5,
+	TNK_LIN,
+	TNK_EXP,
+	TNK_LOW,
+	ARC_LIN,
+	ARC_EXP,
+	ARC_LOW,
 } mode;
+
+typedef enum {
+	LEFT,
+	RIGHT,
+} side;
 
 typedef struct {
 	signed byte iPower;
@@ -82,16 +87,6 @@ typedef struct {
 typedef struct {
 	unsigned byte iPosition;
 } my_servo;
-
-typedef struct {
-	signed byte x;
-	signed byte y;
-} my_joystick;
-
-typedef struct {
-	my_joystick oLeftJoystick;
-	my_joystick oRightJoystick;
-} my_controller;
 
 typedef struct {
 	my_motor oLeftMotor;
@@ -106,7 +101,7 @@ typedef struct {
 /* ==== FUNCTIONS ===== */
 
 void vInitializeRobot(void);
-void vJoyToPower(robot *oRobot, my_controller *oController);
+int iJoyToPower(side theSide);
 
 /* ===== GLOBALS === */
 
@@ -125,25 +120,18 @@ task main() {
 	StartTask(ReadJoystick2);
 	StartTask(UpdateDriveMotors);
 	StartTask(UpdateManipulators);
-
 	StartTask(Debug);
 
 	// Do nothing, for the tasks do it all
 	while(1) wait10Msec(1000);
 }
 
-/* Task ReadJoystick1 --  */
 task ReadJoystick1() {
-	my_controller oController;
-
 	while(1) {
 	    getJoystickSettings(joystick);
-		oController.oLeftJoystick.x = joystick.joy1_x1;
-		oController.oLeftJoystick.y = joystick.joy1_y1;
-		oController.oRightJoystick.x = joystick.joy1_x2;
-		oController.oRightJoystick.y = joystick.joy1_y2;
 
-	    vJoyToPower(&oRobot, &oController);
+	    oRobot.oLeftMotor.iPower = iJoyToPower(LEFT);
+	    oRobot.oRightMotor.iPower = iJoyToPower(RIGHT);
 
 	    if (joystick.joy1_TopHat == DPAD_UP) {
 	    	oRobot.oLeftMotor.iPower = 25;
@@ -179,18 +167,18 @@ task ReadJoystick2() {
 
 		oRobot.oTurnTable.iPower = 0;
 		if(joystick.joy2_TopHat == DPAD_LEFT) {
-			oRobot.oTurnTable.iPower = -30;
+			oRobot.oTurnTable.iPower = -40;
 		}
 		if(joystick.joy2_TopHat == DPAD_RIGHT) {
-			oRobot.oTurnTable.iPower = 30;
+			oRobot.oTurnTable.iPower = 40;
 		}
 
         oRobot.oLift.iPower = 0;
         if(joy2Btn(6)) {
-            oRobot.oLift.iPower = 100;
+            oRobot.oLift.iPower = 50;
         }
         if(joy2Btn(8)) {
-            oRobot.oLift.iPower = -100;
+            oRobot.oLift.iPower = -50;
         }
 
 		if(joy2Btn(5)) {
@@ -246,58 +234,58 @@ void vInitializeRobot() {
 /*--- End fake mode code -- this ***MUST*** be replaced by actual code later ---*/
 }
 
-void vJoyToPower(robot *oRobot, my_controller *oController) {
+int iJoyToPower(side theSide) {
 	float fLeftPower;
 	float fRightPower;
 
-	switch(oRobot->oMode) {
+	switch(oRobot.oMode) {
 		case TNK_LIN:
-			fLeftPower = (float) (((float) oController->oLeftJoystick.y) / 127);
-			fRightPower = (float) (((float) oController->oRightJoystick.y) / 127);
+			fLeftPower = (float) (((float) joystick.joy1_y1) / 127);
+			fRightPower = (float) (((float) joystick.joy1_y2) / 127);
 			fLeftPower *= 100;
 			fRightPower *= 100;
 			fLeftPower = fLeftPower >= DEADZONE ? fLeftPower : 0;
 			fRightPower = fRightPower >= DEADZONE ? fRightPower : 0;
 			break;
 		case TNK_EXP:
-			fLeftPower = (float) (((float) oController->oLeftJoystick.y) / 127);
-			fRightPower = (float) (((float) oController->oRightJoystick.y) / 127);
+			fLeftPower = (float) (((float) joystick.joy1_y1) / 127);
+			fRightPower = (float) (((float) joystick.joy1_y2) / 127);
 			pow(fLeftPower, 3);
 			pow(fRightPower, 3);
 			fLeftPower *= 100;
 			fRightPower *= 100;
 			break;
 		case TNK_LOW:
-			fLeftPower = (float) (((float) oController->oLeftJoystick.y) / 127);
-			fRightPower = (float) (((float) oController->oRightJoystick.y) / 127);
+			fLeftPower = (float) (((float) joystick.joy1_y1) / 127);
+			fRightPower = (float) (((float) joystick.joy1_y2) / 127);
 			fLeftPower *= 50;
 			fRightPower *= 50;
 			fLeftPower = fLeftPower >= DEADZONE ? fLeftPower : 0;
 			fRightPower = fRightPower >= DEADZONE ? fRightPower : 0;
 			break;
 		case ARC_LIN:
-			if(abs(oController->oLeftJoystick.y) > DEADZONE) {
-				fLeftPower = 100 * ((float) (((float) oController->oLeftJoystick.y) / 127));
-				fRightPower = 100 * ((float) (((float) oController->oLeftJoystick.y) / 127));
-			} else if(abs(oController->oRightJoystick.x) > DEADZONE) {
-				fLeftPower = -100 * ((float) (((float) oController->oRightJoystick.x) / 127));
-				fRightPower = 100 * ((float) (((float) oController->oRightJoystick.x) / 127));
+			if(abs(joystick.joy1_y1) > DEADZONE) {
+				fLeftPower = 100 * ((float) (((float) joystick.joy1_y1) / 127));
+				fRightPower = 100 * ((float) (((float) joystick.joy1_y1) / 127));
+			} else if(abs(joystick.joy1_x2) > DEADZONE) {
+				fLeftPower = -100 * ((float) (((float) joystick.joy1_x2) / 127));
+				fRightPower = 100 * ((float) (((float) joystick.joy1_x2) / 127));
 			} else {
 				fLeftPower = 0;
 				fRightPower = 0;
 			}
 			break;
 		case ARC_EXP:
-			if(abs(oController->oLeftJoystick.y) > DEADZONE) {
-				fLeftPower = (float) (((float) oController->oLeftJoystick.y) / 127);
-				fRightPower = (float) (((float) oController->oLeftJoystick.y) / 127);
+			if(abs(joystick.joy1_y1) > DEADZONE) {
+				fLeftPower = (float) (((float) joystick.joy1_y1) / 127);
+				fRightPower = (float) (((float) joystick.joy1_y1) / 127);
 				pow(fLeftPower, 3);
 				pow(fRightPower, 3);
 				fLeftPower *= 100;
 				fRightPower *= 100;
-			} else if(abs(oController->oRightJoystick.x) > DEADZONE) {
-				fLeftPower = (float) (((float) oController->oRightJoystick.x) / 127);
-				fRightPower = (float) (((float) oController->oRightJoystick.x) / 127);
+			} else if(abs(joystick.joy1_x2) > DEADZONE) {
+				fLeftPower = (float) (((float) joystick.joy1_x2) / 127);
+				fRightPower = (float) (((float) joystick.joy1_x2) / 127);
 				pow(fLeftPower, 3);
 				pow(fRightPower, 3);
 				fLeftPower *= -100;
@@ -308,12 +296,12 @@ void vJoyToPower(robot *oRobot, my_controller *oController) {
 			}
 			break;
 		case ARC_LOW:
-			if(abs(oController->oLeftJoystick.y) > DEADZONE) {
-				fLeftPower = 50 * ((float) (((float) oController->oLeftJoystick.y) / 127));
-				fRightPower = 50 * ((float) (((float) oController->oLeftJoystick.y) / 127));
-			} else if(abs(oController->oRightJoystick.x) > DEADZONE) {
-				fLeftPower = -50 * ((float) (((float) oController->oRightJoystick.x) / 127));
-				fRightPower = 50 * ((float) (((float) oController->oRightJoystick.x) / 127));
+			if(abs(joystick.joy1_y1) > DEADZONE) {
+				fLeftPower = 50 * ((float) (((float) joystick.joy1_y1) / 127));
+				fRightPower = 50 * ((float) (((float) joystick.joy1_y1) / 127));
+			} else if(abs(joystick.joy1_x2) > DEADZONE) {
+				fLeftPower = -50 * ((float) (((float) joystick.joy1_x2) / 127));
+				fRightPower = 50 * ((float) (((float) joystick.joy1_x2) / 127));
 			} else {
 				fLeftPower = 0;
 				fRightPower = 0;
@@ -323,8 +311,14 @@ void vJoyToPower(robot *oRobot, my_controller *oController) {
 			/* Do Nothing */
 	}
 
-	oRobot->oLeftMotor.iPower = fLeftPower;
-	oRobot->oRightMotor.iPower = fRightPower;
-
-	return;
+	switch(theSide) {
+		case LEFT:
+			return (int) fLeftPower;
+			break;
+		case RIGHT:
+			return (int) fRightPower;
+			break;
+		default:
+			return 0;
+	}
 }
