@@ -53,6 +53,9 @@
 #define RAISE_THE_TOPSAIL 255
 #define LOWER_THE_TOPSAIL 10
 
+// This is not a #define, but we treat it like one
+word FILE_SIZE = 255;
+
 /* ===== TASKS ===== */
 
 task ReadJoystick1();
@@ -67,12 +70,12 @@ task Debug();
    are different. This assures that this enum will always
    work, even across compilers and compiler versions */
 typedef enum {
-	TNK_LIN,
-	TNK_EXP,
-	TNK_LOW,
-	ARC_LIN,
-	ARC_EXP,
-	ARC_LOW,
+	TNK_LIN = 1,
+	TNK_EXP = 0,
+	TNK_LOW = 2,
+	ARC_LIN = 4,
+	ARC_EXP = 3,
+	ARC_LOW = 5,
 } mode;
 
 typedef enum {
@@ -224,14 +227,24 @@ task Debug() {
 }
 
 void vInitializeRobot() {
+	TFileHandle file;
+	TFileIOResult result;
+	byte value;
+
 	oRobot.oLeftMotor.iPower = 0;
 	oRobot.oRightMotor.iPower = 0;
 	oRobot.oTurnTable.iPower = 0;
 	oRobot.oLift.iPower = 0;
 	oRobot.oMainMast.iPosition = LOWER_THE_TOPSAIL;
-/*--- Get Mode from DIP Switch and/or a series of switches ---*/
-	oRobot.oMode = TNK_EXP;
-/*--- End fake mode code -- this ***MUST*** be replaced by actual code later ---*/
+
+	OpenRead(file, result, "teleoprc.txt", FILE_SIZE);
+	ReadShort(file, result, value);
+	Close(file,result);
+
+	oRobot.oMode = (mode) (value - 48);
+
+	clearDebugStream();
+	writeDebugStreamLine("MODE: %d", (int) oRobot.oMode);
 }
 
 int iJoyToPower(side theSide) {

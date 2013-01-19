@@ -55,7 +55,7 @@ void writeRC(void) {
 
 	string selection = "";
 
-	selection = options[menu()];
+	selection = menu();
 
 	Delete("teleoprc.txt", result);
 	OpenWrite(file, result, "teleoprc.txt", FILE_SIZE);
