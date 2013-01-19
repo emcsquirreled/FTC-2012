@@ -240,11 +240,9 @@ void vInitializeRobot() {
 	OpenRead(file, result, "teleoprc.txt", FILE_SIZE);
 	ReadShort(file, result, value);
 	Close(file,result);
-
 	oRobot.oMode = (mode) (value - 48);
 
-	clearDebugStream();
-	writeDebugStreamLine("MODE: %d", (int) oRobot.oMode);
+	return;
 }
 
 int iJoyToPower(side theSide) {
@@ -281,8 +279,8 @@ int iJoyToPower(side theSide) {
 				fLeftPower = 100 * ((float) (((float) joystick.joy1_y1) / 127));
 				fRightPower = 100 * ((float) (((float) joystick.joy1_y1) / 127));
 			} else if(abs(joystick.joy1_x2) > DEADZONE) {
-				fLeftPower = -100 * ((float) (((float) joystick.joy1_x2) / 127));
-				fRightPower = 100 * ((float) (((float) joystick.joy1_x2) / 127));
+				fLeftPower = 100 * ((float) (((float) joystick.joy1_x2) / 127));
+				fRightPower = -100 * ((float) (((float) joystick.joy1_x2) / 127));
 			} else {
 				fLeftPower = 0;
 				fRightPower = 0;
@@ -301,8 +299,8 @@ int iJoyToPower(side theSide) {
 				fRightPower = (float) (((float) joystick.joy1_x2) / 127);
 				pow(fLeftPower, 3);
 				pow(fRightPower, 3);
-				fLeftPower *= -100;
-				fRightPower *= 100;
+				fLeftPower *= 100;
+				fRightPower *= -100;
 			} else {
 				fLeftPower = 0;
 				fRightPower = 0;
@@ -313,8 +311,8 @@ int iJoyToPower(side theSide) {
 				fLeftPower = 50 * ((float) (((float) joystick.joy1_y1) / 127));
 				fRightPower = 50 * ((float) (((float) joystick.joy1_y1) / 127));
 			} else if(abs(joystick.joy1_x2) > DEADZONE) {
-				fLeftPower = -50 * ((float) (((float) joystick.joy1_x2) / 127));
-				fRightPower = 50 * ((float) (((float) joystick.joy1_x2) / 127));
+				fLeftPower = 50 * ((float) (((float) joystick.joy1_x2) / 127));
+				fRightPower = -50 * ((float) (((float) joystick.joy1_x2) / 127));
 			} else {
 				fLeftPower = 0;
 				fRightPower = 0;
