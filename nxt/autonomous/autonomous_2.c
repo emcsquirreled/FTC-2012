@@ -212,7 +212,6 @@ void vOffRight() {
 }
 
 void vOnLeft(short iPower) {
-	/* Reverse the left motor due to wiring */
 	motor[driveLeft] = -1 * iPower;
 	return;
 }
