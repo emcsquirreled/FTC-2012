@@ -152,6 +152,10 @@ task ReadJoystick1() {
 	    	oRobot.oLeftMotor.iPower = 50;
 	    	oRobot.oRightMotor.iPower = -50;
 	  	}
+        if(joy1Btn(4)) {
+	    	oRobot.oLeftMotor.iPower = 50;
+	    	oRobot.oRightMotor.iPower = 50;
+        }
 
 	    wait1Msec(JOYSTICK_UPDATE_TIME);
 	}
@@ -165,15 +169,15 @@ task ReadJoystick2() {
 			oRobot.oArm.iPower = 85;
 		}
 		if(joystick.joy2_TopHat == DPAD_DOWN) {
-			oRobot.oArm.iPower = -20;
+			oRobot.oArm.iPower = -30;
 		}
 
 		oRobot.oTurnTable.iPower = 0;
 		if(joystick.joy2_TopHat == DPAD_LEFT) {
-			oRobot.oTurnTable.iPower = -40;
+			oRobot.oTurnTable.iPower = -50;
 		}
 		if(joystick.joy2_TopHat == DPAD_RIGHT) {
-			oRobot.oTurnTable.iPower = 40;
+			oRobot.oTurnTable.iPower = 50;
 		}
 
         oRobot.oLift.iPower = 0;
@@ -197,7 +201,7 @@ task ReadJoystick2() {
 
 task UpdateDriveMotors() {
 	while(1) {
-	    motor[driveLeft] = -oRobot.oLeftMotor.iPower;
+	    motor[driveLeft] = -1 * oRobot.oLeftMotor.iPower;
 	    motor[driveRight] = oRobot.oRightMotor.iPower;
 	    wait10Msec(MOTOR_UPDATE_TIME);
 	}
@@ -255,8 +259,8 @@ int iJoyToPower(side theSide) {
 			fRightPower = (float) (((float) joystick.joy1_y2) / 127);
 			fLeftPower *= 100;
 			fRightPower *= 100;
-			fLeftPower = fLeftPower >= DEADZONE ? fLeftPower : 0;
-			fRightPower = fRightPower >= DEADZONE ? fRightPower : 0;
+			fLeftPower = abs(fLeftPower) >= DEADZONE ? fLeftPower : 0;
+			fRightPower = abs(fRightPower) >= DEADZONE ? fRightPower : 0;
 			break;
 		case TNK_EXP:
 			fLeftPower = (float) (((float) joystick.joy1_y1) / 127);
@@ -271,8 +275,8 @@ int iJoyToPower(side theSide) {
 			fRightPower = (float) (((float) joystick.joy1_y2) / 127);
 			fLeftPower *= 50;
 			fRightPower *= 50;
-			fLeftPower = fLeftPower >= DEADZONE ? fLeftPower : 0;
-			fRightPower = fRightPower >= DEADZONE ? fRightPower : 0;
+			fLeftPower = abs(fLeftPower) >= DEADZONE ? fLeftPower : 0;
+			fRightPower = abs(fRightPower) >= DEADZONE ? fRightPower : 0;
 			break;
 		case ARC_LIN:
 			if(abs(joystick.joy1_y1) > DEADZONE) {
