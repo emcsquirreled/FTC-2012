@@ -71,8 +71,8 @@ task main() {
 
 	servo[irServo] = IR_POS_UP;
 
-	vOnLeft(DRIVE_SPEED);
-	vOnRight(DRIVE_SPEED);
+	vOnLeft(-1 * DRIVE_SPEED);
+	vOnRight(-1 * DRIVE_SPEED);
 
 	ClearTimer(T1);
 	while((time1[T1] < MAX_SECS) && (!bAtBeacon())) {
