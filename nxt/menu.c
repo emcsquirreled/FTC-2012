@@ -1,21 +1,8 @@
 #define STR_ARRAY_SIZE 6
-
-void writeRC(void);
-
 string options[STR_ARRAY_SIZE];
 int size = 6;
 word FILE_SIZE = 255;
 
-task main() {
-	options[0] = "TNK_EXP";
-	options[1] = "TNK_LIN";
-	options[2] = "TNK_LOW";
-	options[3] = "ARC_EXP";
-	options[4] = "ARC_LIN";
-	options[5] = "ARC_LOW";
-
-	writeRC();
-}
 
 int menu(void) {
 	int index = 0;
@@ -49,18 +36,23 @@ int menu(void) {
 	return index;
 }
 
-void writeRC(void) {
+task main() {
 	TFileHandle file;
 	TFileIOResult result;
 
+	/* Teleop RC */
 	string selection = "";
-
+	options[0] = "TNK_EXP";
+	options[1] = "TNK_LIN";
+	options[2] = "TNK_LOW";
+	options[3] = "ARC_EXP";
+	options[4] = "ARC_LIN";
+	options[5] = "ARC_LOW";
+	size = 6;
 	selection = menu();
 
 	Delete("teleoprc.txt", result);
 	OpenWrite(file, result, "teleoprc.txt", FILE_SIZE);
 	WriteText(file, result, selection);
 	Close(file, result);
-
-	return;
 }
