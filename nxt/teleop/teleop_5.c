@@ -145,16 +145,20 @@ task ReadJoystick1() {
 	    	oRobot.oRightMotor.iPower = -25;
 	  	}
 	  	if (joystick.joy1_TopHat == DPAD_LEFT) {
-	    	oRobot.oLeftMotor.iPower = -50;
-	    	oRobot.oRightMotor.iPower = 50;
+	    	oRobot.oLeftMotor.iPower = -60;
+	    	oRobot.oRightMotor.iPower = 60;
 	  	}
 	  	if (joystick.joy1_TopHat == DPAD_RIGHT) {
-	    	oRobot.oLeftMotor.iPower = 50;
-	    	oRobot.oRightMotor.iPower = -50;
+	    	oRobot.oLeftMotor.iPower = 60;
+	    	oRobot.oRightMotor.iPower = -60;
 	  	}
         if(joy1Btn(4)) {
-	    	oRobot.oLeftMotor.iPower = 50;
-	    	oRobot.oRightMotor.iPower = 50;
+	    	oRobot.oLeftMotor.iPower = 40;
+	    	oRobot.oRightMotor.iPower = 40;
+        }
+        if(joy1Btn(2)) {
+	    	oRobot.oLeftMotor.iPower = -40;
+	    	oRobot.oRightMotor.iPower = -40;
         }
 
 	    wait1Msec(JOYSTICK_UPDATE_TIME);
