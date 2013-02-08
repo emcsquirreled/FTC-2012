@@ -54,10 +54,14 @@ bool bAtBeacon(void);
 
 const int IR_POS_UP = 255;
 const int IR_POS_DOWN = 10;
+
 const int CONT_FWD = 255;
 const int CONT_OFF = 127;
 const int CONT_BWD = 0;
+
 const int DRIVE_SPEED = 40;
+
+const int MAX_SECS = 5 * 1000;
 
 /* ===== CODE ===== */
 
@@ -68,29 +72,32 @@ task main()
 
 	servo[irServo] = IR_POS_UP;
 
-	 vOnLeft(DRIVE_SPEED);
-	 vOnRight(DRIVE_SPEED);
-
-	 while(!bAtBeacon()) {
-	 	/* Do nothing */
-	 }
-
-	vOffLeft();
-	vOffRight();
-
-	servo[sliderServo] = CONT_FWD;
-	wait1Msec(2500);
-	servo[sliderServo] = CONT_OFF;
-
 	vOnLeft(DRIVE_SPEED);
 	vOnRight(DRIVE_SPEED);
-	wait1Msec(500);
+
+	ClearTimer(T1);
+	while((time1[T1] < MAX_SECS) && (!bAtBeacon())) {
+		/* Do nothing */
+	}
+
 	vOffLeft();
 	vOffRight();
 
-	servo[sliderServo] = CONT_BWD;
-	wait1Msec(2500);
-	servo[sliderServo] = CONT_OFF;
+	if(bAtBeacon()) {
+		servo[sliderServo] = CONT_FWD;
+		wait1Msec(2500);
+		servo[sliderServo] = CONT_OFF;
+
+		vOnLeft(DRIVE_SPEED);
+		vOnRight(DRIVE_SPEED);
+		wait1Msec(500);
+		vOffLeft();
+		vOffRight();
+
+		servo[sliderServo] = CONT_BWD;
+		wait1Msec(2500);
+		servo[sliderServo] = CONT_OFF;
+	}
 }
 
 void vInitializeRobot() {
