@@ -68,6 +68,7 @@ const int MAX_SECS = 5 * 1000;
 task main() {
 	vInitializeRobot();
 	waitForStart();
+	wait1Msec(15 * 1000);
 
 	servo[irServo] = IR_POS_UP;
 
