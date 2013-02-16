@@ -75,14 +75,17 @@ task main() {
 	vOnRight(DRIVE_SPEED);
 
 	ClearTimer(T1);
-	while((time1[T1] < MAX_SECS) && (!bAtBeacon())) {
+	bool is_at_beacon = bAtBeacon();
+	while((time1[T1] < MAX_SECS) && (!is_at_beacon)) { //(!bAtBeacon())) {
+		is_at_beacon = bAtBeacon();
 		/* Do nothing */
 	}
 
 	vOffLeft();
 	vOffRight();
 
-	if(bAtBeacon()) {
+//	if(bAtBeacon()) {
+	if(is_at_beacon){
 		servo[sliderServo] = CONT_FWD;
 		wait1Msec(2500);
 		servo[sliderServo] = CONT_OFF;
