@@ -5,6 +5,7 @@
 
 # Old Source Files
 *[0-9].c
+old_code/
 
 # Temporary Files
 *.swp

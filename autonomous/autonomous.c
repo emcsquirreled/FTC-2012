@@ -66,6 +66,8 @@ const int MAX_SECS = 5 * 1000;
 /* ===== CODE ===== */
 
 task main() {
+	bool isAtBeacon;
+
 	vInitializeRobot();
 	waitForStart();
 
@@ -75,17 +77,14 @@ task main() {
 	vOnRight(DRIVE_SPEED);
 
 	ClearTimer(T1);
-	bool is_at_beacon = bAtBeacon();
-	while((time1[T1] < MAX_SECS) && (!is_at_beacon)) { //(!bAtBeacon())) {
-		is_at_beacon = bAtBeacon();
-		/* Do nothing */
-	}
+	do {
+		isAtBeacon = bAtBeacon();
+	} while((time1[T1] < MAX_SECS) && (!isAtBeacon));
 
 	vOffLeft();
 	vOffRight();
 
-//	if(bAtBeacon()) {
-	if(is_at_beacon){
+	if(isAtBeacon){
 		servo[sliderServo] = CONT_FWD;
 		wait1Msec(2500);
 		servo[sliderServo] = CONT_OFF;
@@ -113,10 +112,12 @@ void vInitializeRobot(void) {
 bool bAtBeacon(void) {
 	int zones[5];
 	HTIRS2readAllACStrength(IR, zones[0], zones[1], zones[2], zones[3], zones[4]);
+
 	clearDebugStream();
 	for(int i = 0; i < 5; i++) {
 		writeDebugStreamLine("zone %d:\t%d", i, zones[i]);
 	}
+
 	return ((zones[1] > 50) && (zones[2] > 50) && (abs(zones[1] - zones[2]) < 10));
 }
 
