@@ -1,11 +1,19 @@
+# Binary Files
 *.o
 *.img
 *.rxe
 
+# Old Source Files
+*[0-9].c
+
+# Temporary Files
 *.swp
 *.temp
 
+# Configuration Files
 FTCConfig.txt
+teleoprc.txt
 
-kernel/*
+# External Source Files
+kernel/
 includes/

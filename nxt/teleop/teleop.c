@@ -53,6 +53,9 @@
 #define RAISE_THE_TOPSAIL 255
 #define LOWER_THE_TOPSAIL 10
 
+// This is not a #define, but we treat it like one
+word FILE_SIZE = 255;
+
 /* ===== TASKS ===== */
 
 task ReadJoystick1();
@@ -67,12 +70,12 @@ task Debug();
    are different. This assures that this enum will always
    work, even across compilers and compiler versions */
 typedef enum {
-	TNK_LIN,
-	TNK_EXP,
-	TNK_LOW,
-	ARC_LIN,
-	ARC_EXP,
-	ARC_LOW,
+	TNK_LIN = 1,
+	TNK_EXP = 0,
+	TNK_LOW = 2,
+	ARC_LIN = 4,
+	ARC_EXP = 3,
+	ARC_LOW = 5,
 } mode;
 
 typedef enum {
@@ -142,13 +145,21 @@ task ReadJoystick1() {
 	    	oRobot.oRightMotor.iPower = -25;
 	  	}
 	  	if (joystick.joy1_TopHat == DPAD_LEFT) {
-	    	oRobot.oLeftMotor.iPower = -50;
-	    	oRobot.oRightMotor.iPower = 50;
+	    	oRobot.oLeftMotor.iPower = -70;
+	    	oRobot.oRightMotor.iPower = 70;
 	  	}
 	  	if (joystick.joy1_TopHat == DPAD_RIGHT) {
-	    	oRobot.oLeftMotor.iPower = 50;
-	    	oRobot.oRightMotor.iPower = -50;
+	    	oRobot.oLeftMotor.iPower = 70;
+	    	oRobot.oRightMotor.iPower = -70;
 	  	}
+        if(joy1Btn(4)) {
+	    	oRobot.oLeftMotor.iPower = 40;
+	    	oRobot.oRightMotor.iPower = 40;
+        }
+        if(joy1Btn(2)) {
+	    	oRobot.oLeftMotor.iPower = -40;
+	    	oRobot.oRightMotor.iPower = -40;
+        }
 
 	    wait1Msec(JOYSTICK_UPDATE_TIME);
 	}
@@ -162,15 +173,15 @@ task ReadJoystick2() {
 			oRobot.oArm.iPower = 85;
 		}
 		if(joystick.joy2_TopHat == DPAD_DOWN) {
-			oRobot.oArm.iPower = -20;
+			oRobot.oArm.iPower = -30;
 		}
 
 		oRobot.oTurnTable.iPower = 0;
 		if(joystick.joy2_TopHat == DPAD_LEFT) {
-			oRobot.oTurnTable.iPower = -40;
+			oRobot.oTurnTable.iPower = -50;
 		}
 		if(joystick.joy2_TopHat == DPAD_RIGHT) {
-			oRobot.oTurnTable.iPower = 40;
+			oRobot.oTurnTable.iPower = 50;
 		}
 
         oRobot.oLift.iPower = 0;
@@ -194,7 +205,7 @@ task ReadJoystick2() {
 
 task UpdateDriveMotors() {
 	while(1) {
-	    motor[driveLeft] = -oRobot.oLeftMotor.iPower;
+	    motor[driveLeft] = -1 * oRobot.oLeftMotor.iPower;
 	    motor[driveRight] = oRobot.oRightMotor.iPower;
 	    wait10Msec(MOTOR_UPDATE_TIME);
 	}
@@ -224,14 +235,22 @@ task Debug() {
 }
 
 void vInitializeRobot() {
+	TFileHandle file;
+	TFileIOResult result;
+	byte value;
+
 	oRobot.oLeftMotor.iPower = 0;
 	oRobot.oRightMotor.iPower = 0;
 	oRobot.oTurnTable.iPower = 0;
 	oRobot.oLift.iPower = 0;
 	oRobot.oMainMast.iPosition = LOWER_THE_TOPSAIL;
-/*--- Get Mode from DIP Switch and/or a series of switches ---*/
-	oRobot.oMode = TNK_EXP;
-/*--- End fake mode code -- this ***MUST*** be replaced by actual code later ---*/
+
+	OpenRead(file, result, "teleoprc.txt", FILE_SIZE);
+	ReadShort(file, result, value);
+	Close(file,result);
+	oRobot.oMode = (mode) (value - 48);
+
+	return;
 }
 
 int iJoyToPower(side theSide) {
@@ -244,8 +263,8 @@ int iJoyToPower(side theSide) {
 			fRightPower = (float) (((float) joystick.joy1_y2) / 127);
 			fLeftPower *= 100;
 			fRightPower *= 100;
-			fLeftPower = fLeftPower >= DEADZONE ? fLeftPower : 0;
-			fRightPower = fRightPower >= DEADZONE ? fRightPower : 0;
+			fLeftPower = abs(fLeftPower) >= DEADZONE ? fLeftPower : 0;
+			fRightPower = abs(fRightPower) >= DEADZONE ? fRightPower : 0;
 			break;
 		case TNK_EXP:
 			fLeftPower = (float) (((float) joystick.joy1_y1) / 127);
@@ -260,16 +279,16 @@ int iJoyToPower(side theSide) {
 			fRightPower = (float) (((float) joystick.joy1_y2) / 127);
 			fLeftPower *= 50;
 			fRightPower *= 50;
-			fLeftPower = fLeftPower >= DEADZONE ? fLeftPower : 0;
-			fRightPower = fRightPower >= DEADZONE ? fRightPower : 0;
+			fLeftPower = abs(fLeftPower) >= DEADZONE ? fLeftPower : 0;
+			fRightPower = abs(fRightPower) >= DEADZONE ? fRightPower : 0;
 			break;
 		case ARC_LIN:
 			if(abs(joystick.joy1_y1) > DEADZONE) {
 				fLeftPower = 100 * ((float) (((float) joystick.joy1_y1) / 127));
 				fRightPower = 100 * ((float) (((float) joystick.joy1_y1) / 127));
 			} else if(abs(joystick.joy1_x2) > DEADZONE) {
-				fLeftPower = -100 * ((float) (((float) joystick.joy1_x2) / 127));
-				fRightPower = 100 * ((float) (((float) joystick.joy1_x2) / 127));
+				fLeftPower = 100 * ((float) (((float) joystick.joy1_x2) / 127));
+				fRightPower = -100 * ((float) (((float) joystick.joy1_x2) / 127));
 			} else {
 				fLeftPower = 0;
 				fRightPower = 0;
@@ -288,8 +307,8 @@ int iJoyToPower(side theSide) {
 				fRightPower = (float) (((float) joystick.joy1_x2) / 127);
 				pow(fLeftPower, 3);
 				pow(fRightPower, 3);
-				fLeftPower *= -100;
-				fRightPower *= 100;
+				fLeftPower *= 100;
+				fRightPower *= -100;
 			} else {
 				fLeftPower = 0;
 				fRightPower = 0;
@@ -300,8 +319,8 @@ int iJoyToPower(side theSide) {
 				fLeftPower = 50 * ((float) (((float) joystick.joy1_y1) / 127));
 				fRightPower = 50 * ((float) (((float) joystick.joy1_y1) / 127));
 			} else if(abs(joystick.joy1_x2) > DEADZONE) {
-				fLeftPower = -50 * ((float) (((float) joystick.joy1_x2) / 127));
-				fRightPower = 50 * ((float) (((float) joystick.joy1_x2) / 127));
+				fLeftPower = 50 * ((float) (((float) joystick.joy1_x2) / 127));
+				fRightPower = -50 * ((float) (((float) joystick.joy1_x2) / 127));
 			} else {
 				fLeftPower = 0;
 				fRightPower = 0;
