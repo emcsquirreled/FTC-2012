@@ -32,7 +32,7 @@ CREDITS
 
 Unless otherwise stated, all code is written by mfabel@github.com.
 
-****** Thanks to:
+**Thanks to:**
 
 * My coach for his tireless answering of dumb, brainless questions.
 * Skinkworks, Sparbots, and the other RobotC masters of the FTC forum.
