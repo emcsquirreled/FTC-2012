@@ -23,9 +23,6 @@ ORGANIZATION
 * `autonomous/`
     Autonomous code for the NXT
 
-* `libraries/`
-    Libraries for RobotC, custom and otherwise
-
 
 CREDITS
 -------
