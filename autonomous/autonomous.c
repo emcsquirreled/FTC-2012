@@ -63,6 +63,8 @@ const int DRIVE_SPEED = 40;
 
 const int MAX_SECS = 5 * 1000;
 
+bool inRange = false;
+
 /* ===== CODE ===== */
 
 task main() {
@@ -111,14 +113,18 @@ void vInitializeRobot(void) {
 
 bool bAtBeacon(void) {
 	int zones[5];
+	int average = 0;
+
 	HTIRS2readAllACStrength(IR, zones[0], zones[1], zones[2], zones[3], zones[4]);
 
-	clearDebugStream();
-	for(int i = 0; i < 5; i++) {
-		writeDebugStreamLine("zone %d:\t%d", i, zones[i]);
-	}
+	for(int i = 0; i < 5; i++) average += zones[i];
+	average /= 5;
 
-	return ((zones[1] > 50) && (zones[2] > 50) && (abs(zones[1] - zones[2]) < 10));
+	if(((zones[1] - average) > 10) && ((zones[2] - average) > 10)) inRange = true;
+
+	if(inRange && ((zones[1] - zones[2]) > -10)) inRange = true;
+
+	return inRange;
 }
 
 void vOnLeft(short iPower) {
