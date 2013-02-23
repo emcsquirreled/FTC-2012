@@ -97,6 +97,32 @@ task main() {
 	vOffLeft();
 	vOffRight();
 
+	if(time1[T1] > 4000) {
+		wait1Msec(100);
+
+		vOnLeft(-40);
+		vOnRight(-40);
+		wait1Msec(500);
+		vOffLeft();
+		vOffRight();
+
+		wait1Msec(100);
+
+		isAtBeacon = false;
+		inRange = false;
+		vOnLeft(DRIVE_SPEED / 2);
+		vOnRight(DRIVE_SPEED / 2);
+		do {
+			isAtBeacon = bAtBeacon();
+		} while(!isAtBeacon);
+
+		vOffLeft();
+		vOffRight();
+	}
+
+
+
+
 	/* If we found the beacon, score the ring */
 	if(isAtBeacon){
 		/* Extend the arm, placing the ring on the peg */
@@ -148,7 +174,7 @@ bool bAtBeacon(void) {
 	if(((zones[1] - average) > 10) && ((zones[2] - average) > 10)) inRange = true;
 
 	/* When we are in range and the critical zones are nearly equal (or we have overshot) we are at the beacon */
-	if(inRange && ((zones[1] - zones[2]) > -10)) atBeacon = true;
+	if(inRange && ((zones[1] - zones[2]) > 0)) atBeacon = true;
 
 	return atBeacon;
 }
