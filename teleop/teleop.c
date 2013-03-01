@@ -151,35 +151,30 @@ task ReadJoystick1() {
 		/* Update the joystick structure */
 	    getJoystickSettings(joystick);
 
-		/* Set the drive power from the joysticks */
-	    oRobot.oLeftMotor.iPower = iJoyToPower(LEFT);
-	    oRobot.oRightMotor.iPower = iJoyToPower(RIGHT);
-
 		/* Overide the joystick values if the DPad is used */
 	    if (joystick.joy1_TopHat == DPAD_UP) {
 	    	oRobot.oLeftMotor.iPower = 35;
 	    	oRobot.oRightMotor.iPower = 35;
-	  	}
-	  	if (joystick.joy1_TopHat == DPAD_DOWN) {
+	  	} else if (joystick.joy1_TopHat == DPAD_DOWN) {
 	    	oRobot.oLeftMotor.iPower = -35;
 	    	oRobot.oRightMotor.iPower = -35;
-	  	}
-	  	if (joystick.joy1_TopHat == DPAD_LEFT) {
+	  	} else  if (joystick.joy1_TopHat == DPAD_LEFT) {
 	    	oRobot.oLeftMotor.iPower = -60;
 	    	oRobot.oRightMotor.iPower = 60;
-	  	}
-	  	if (joystick.joy1_TopHat == DPAD_RIGHT) {
+	  	} else  if (joystick.joy1_TopHat == DPAD_RIGHT) {
 	    	oRobot.oLeftMotor.iPower = 60;
 	    	oRobot.oRightMotor.iPower = -60;
-	  	}
-        if(joy1Btn(4)) {
+	  	} else  if(joy1Btn(4)) {
 	    	oRobot.oLeftMotor.iPower = 40;
 	    	oRobot.oRightMotor.iPower = 40;
-        }
-        if(joy1Btn(2)) {
+        } else  if(joy1Btn(2)) {
 	    	oRobot.oLeftMotor.iPower = -40;
 	    	oRobot.oRightMotor.iPower = -40;
-        }
+        } else {
+			/* Set the drive power from the joysticks */
+		    oRobot.oLeftMotor.iPower = iJoyToPower(LEFT);
+		    oRobot.oRightMotor.iPower = iJoyToPower(RIGHT);
+    	}
 
 		/* Give processor time to the other tasks */
 	    wait1Msec(JOYSTICK_UPDATE_TIME);
