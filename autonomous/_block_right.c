@@ -10,19 +10,27 @@
 #pragma config(Servo,  srvo_S1_C4_5,    sliderServo,          tServoContinuousRotation)
 #pragma config(Servo,  srvo_S1_C4_6,    irServo,              tServoStandard)
 
+/* Include FCS and Samantha drivers */
 #include <JoystickDriver.c>
 
-task main()
-{
+task main() {
+	/* Wait for the match to begin */
 	waitForStart();
 
+	/* Drive to the other side of the field */
 	motor[driveLeft] = -100;
 	motor[driveRight] = 100;
 	wait10Msec(200);
+
+	/* Turn right */
 	motor[driveRight] = 0;
 	wait10Msec(100);
+
+	/* Drive in front of the rack */
 	motor[driveRight] = 100;
 	wait10Msec(100);
+
+	/* Stop */
 	motor[driveLeft] = 0;
 	motor[driveRight] = 0;
 }
