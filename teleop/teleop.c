@@ -60,7 +60,7 @@
 
 /* Ring Divider servo values */
 #define REMOVE_THE_DIVIDER 255
-#define PLACE_THE_DIVIDER 200
+#define PLACE_THE_DIVIDER 185
 
 /* This is not a #define, but we treat it like one
    Used for file I/O */
