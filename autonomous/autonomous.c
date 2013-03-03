@@ -71,7 +71,7 @@ const int CONT_BWD = 0;
 const int DRIVE_SPEED = 40;
 
 /* Milliseconds before we give up on the beacon */
-const int MAX_SECS = 6 * 1000;
+const int MAX_SECS = 5.5 * 1000;
 
 /* Have we near the beacon? */
 bool inRange = false;
