@@ -60,7 +60,7 @@
 
 /* Ring Divider servo values */
 #define REMOVE_THE_DIVIDER 255
-#define PLACE_THE_DIVIDER 200
+#define PLACE_THE_DIVIDER 195
 
 /* This is not a #define, but we treat it like one
    Used for file I/O */
@@ -159,11 +159,11 @@ task ReadJoystick1() {
 	    	oRobot.oLeftMotor.iPower = -35;
 	    	oRobot.oRightMotor.iPower = -35;
 	  	} else  if (joystick.joy1_TopHat == DPAD_LEFT) {
-	    	oRobot.oLeftMotor.iPower = -60;
-	    	oRobot.oRightMotor.iPower = 60;
+	    	oRobot.oLeftMotor.iPower = -70;
+	    	oRobot.oRightMotor.iPower = 70;
 	  	} else  if (joystick.joy1_TopHat == DPAD_RIGHT) {
-	    	oRobot.oLeftMotor.iPower = 60;
-	    	oRobot.oRightMotor.iPower = -60;
+	    	oRobot.oLeftMotor.iPower = 70;
+	    	oRobot.oRightMotor.iPower = -70;
 	  	} else  if(joy1Btn(4)) {
 	    	oRobot.oLeftMotor.iPower = 40;
 	    	oRobot.oRightMotor.iPower = 40;
